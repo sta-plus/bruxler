@@ -11,10 +11,10 @@ def minify(data, ignore_list=None):
 	new_data = ""
 
 	for i in data.split("\n"):
-		if i == "" or i.startswith("#") or i.startswith("//"):
+		if i.strip() == "" or i.strip().startswith("#") or i.strip().startswith("//"):
 			continue
 
-		if i.startswith("donut(\"") and ignore_list != None:
+		if i.strip().startswith("donut(\"") and ignore_list != None:
 			parsed_filename = i.split("donut(\"")[1].split("\")")[0]
 			if parsed_filename in ignore_list:
 				continue
@@ -33,7 +33,7 @@ def load_modules(directory, module):
 	modules = []
 
 	for i in module.data.split("\n"):
-		if i.startswith("donut(\""):
+		if i.strip().startswith("donut(\""):
 			parsed_filename = i.split("donut(\"")[1].split("\")")[0]
 			try:
 				modules.append(Module(parsed_filename, read_file(directory + "/" + parsed_filename)))
@@ -50,7 +50,7 @@ def bundle(entrypoint_filename):
 	output_data = ""
 
 	for i in modules:
-		output_data += "// Filename: " + i.filename + "\n"
+		output_data += "// " + i.filename + "\n"
 		output_data += minify(i.data)
 
 	# Entrypoint data
