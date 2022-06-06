@@ -36,7 +36,9 @@ def load_modules(directory, module):
 		if i.strip().startswith("donut(\""):
 			parsed_filename = i.split("donut(\"")[1].split("\")")[0]
 			try:
-				modules.append(Module(parsed_filename, read_file(directory + "/" + parsed_filename)))
+				dependency = Module(parsed_filename, read_file(directory + "/" + parsed_filename))
+				modules = modules + load_modules(directory, dependency)
+				modules.append(dependency)
 			except:
 				pass # Dynamic donut()
 
@@ -60,7 +62,7 @@ def bundle(entrypoint_filename):
 	for i in modules:
 		ignore_list.append(i.filename)
 
-	output_data += "// Filename: " + entrypoint_filename + "\n"
+	output_data += "// " + entrypoint_filename + "\n"
 	output_data += minify(entrypoint_module.data, ignore_list=ignore_list)
 
 	return output_data
